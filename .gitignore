@@ -40,3 +40,8 @@ out/
 
 ### key ###
 src/main/resources/firebase/telo-firebase-key.json
+
+# H2 DB files
+*.mv.db
+*.trace.db
+*.h2.db

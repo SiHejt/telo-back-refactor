@@ -39,6 +39,8 @@ dependencies {
 	//Json
 	implementation 'com.fasterxml.jackson.core:jackson-core:2.17.2'
 
+    implementation 'com.mysql:mysql-connector-j'
+
 	runtimeOnly("com.h2database:h2") // 테스트를 위한 의존성 (나중에 지우기)
 }
 

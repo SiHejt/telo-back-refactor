@@ -71,7 +71,7 @@ public class BuildingController {
                 String decryptedAddress = EncryptionUtil.decrypt(building.getEncryptedBuildingAddress());
                 System.out.println("주소 비교: " + decryptedAddress + " with " + buildingAddress);
 
-                if (decryptedAddress.equals(buildingAddress)) {
+                if (decryptedAddress.trim().equals(buildingAddress.trim())) {
                     Member member = memberService.findByMemberID(building.getLandlordID());
 
                     if (member != null) {
