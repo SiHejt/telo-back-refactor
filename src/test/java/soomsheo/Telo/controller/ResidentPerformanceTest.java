@@ -6,12 +6,12 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-import soomsheo.Telo.domain.Member;
-import soomsheo.Telo.domain.building.Building;
-import soomsheo.Telo.domain.building.Resident;
-import soomsheo.Telo.repository.BuildingRepository;
-import soomsheo.Telo.repository.MemberRepository;
-import soomsheo.Telo.repository.ResidentRepository;
+import soomsheo.Telo.member.domain.Member;
+import soomsheo.Telo.building.domain.Building;
+import soomsheo.Telo.building.domain.Resident;
+import soomsheo.Telo.building.BuildingRepository;
+import soomsheo.Telo.member.MemberRepository;
+import soomsheo.Telo.resident.ResidentRepository;
 
 import java.util.ArrayList;
 import java.util.List;
