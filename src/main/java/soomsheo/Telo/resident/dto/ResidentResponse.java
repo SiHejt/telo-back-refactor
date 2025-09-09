@@ -1,17 +1,15 @@
 package soomsheo.Telo.resident.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import soomsheo.Telo.building.domain.Building;
 import soomsheo.Telo.building.domain.Resident;
 import soomsheo.Telo.util.EncryptionUtil;
 
 import java.util.List;
 import java.util.UUID;
 
-public record ResidentRegisterDTO(
+/**
+ * 세입자 정보 조회를 위한 데이터 전송 객체 (Response)
+ */
+public record ResidentResponse(
         String residentName,
         String phoneNumber,
         String apartmentNumber,
@@ -23,13 +21,12 @@ public record ResidentRegisterDTO(
         UUID buildingID,
         List<String> contractImageURL
 ) {
-
-    public static ResidentRegisterDTO fromEntity(Resident resident) {
+    
+    public static ResidentResponse fromEntity(Resident resident) {
         try {
-            return new ResidentRegisterDTO(
+            return new ResidentResponse(
                     resident.getTenant().getMemberRealName(),
-//                    EncryptionUtil.decrypt(resident.getTenant().getEncryptedPhoneNumber()), // 복호화 로직 포함
-                    "phone_number_placeholder",
+                    EncryptionUtil.decrypt(resident.getTenant().getEncryptedPhoneNumber()),
                     resident.getApartmentNumber(),
                     resident.getRentType(),
                     resident.getMonthlyRentAmount(),
@@ -40,8 +37,8 @@ public record ResidentRegisterDTO(
                     resident.getContractImageURL()
             );
         } catch (Exception e) {
-            // 실제 프로덕션에서는 로깅 후 적절한 예외 처리가 필요합니다.
-            throw new RuntimeException("Failed to decrypt phone number", e);
+            // 실제 운영 코드에서는 로깅 후 더 구체적인 예외를 던져야함
+            throw new RuntimeException("Failed to create ResidentResponse DTO from entity", e);
         }
     }
 }

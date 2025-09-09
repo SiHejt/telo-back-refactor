@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
-import soomsheo.Telo.util.EncryptionUtil;
+//import soomsheo.Telo.util.EncryptionUtil;
 
 import java.util.List;
 import java.util.UUID;
@@ -20,7 +20,8 @@ public class Building {
     private UUID buildingID;
 
     private String buildingName;
-    private String encryptedBuildingAddress;
+//    private String encryptedBuildingAddress;
+    private String buildingAddress;
     private int numberOfHouseholds;
     private int numberOfRentedHouseholds;
     private String landlordID;
@@ -35,7 +36,8 @@ public class Building {
     public Building(String buildingName, String buildingAddress, int numberOfHouseholds, int numberOfRentedHouseholds, List<String> imageURL, String landlordID, String notice) throws Exception {
         this.buildingID = UUID.randomUUID();
         this.buildingName = buildingName;
-        this.encryptedBuildingAddress = EncryptionUtil.encrypt(buildingAddress);
+        //this.encryptedBuildingAddress = EncryptionUtil.encrypt(buildingAddress);
+        this.buildingAddress = buildingAddress;
         this.numberOfHouseholds = numberOfHouseholds;
         this.numberOfRentedHouseholds = numberOfRentedHouseholds;
         this.landlordID = landlordID;
@@ -43,11 +45,11 @@ public class Building {
         this.notice = notice;
     }
 
-    public String getBuildingAddress() throws Exception {
-        return EncryptionUtil.decrypt(this.encryptedBuildingAddress);
-    }
+//    public String getBuildingAddress() throws Exception {
+//        return EncryptionUtil.decrypt(this.encryptedBuildingAddress);
+//    }
 
-    public void setBuildingAddress(String buildingAddress) throws Exception {
-        this.encryptedBuildingAddress = EncryptionUtil.encrypt(buildingAddress);
-    }
+//    public void setBuildingAddress(String buildingAddress) throws Exception {
+//        this.encryptedBuildingAddress = EncryptionUtil.encrypt(buildingAddress);
+//    }
 }

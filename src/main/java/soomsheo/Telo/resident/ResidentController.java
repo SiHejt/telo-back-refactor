@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*;
 import soomsheo.Telo.member.domain.Member;
 import soomsheo.Telo.building.domain.Building;
 import soomsheo.Telo.building.domain.Resident;
+import soomsheo.Telo.resident.dto.ResidentCreationRequest;
 import soomsheo.Telo.resident.dto.ResidentDTO;
 import soomsheo.Telo.resident.dto.ResidentRegisterDTO;
 import soomsheo.Telo.building.BuildingService;
@@ -48,27 +49,31 @@ public class ResidentController {
     }
 
     @PostMapping("/tenant/resident-register/{buildingID}/{tenantID}")
-    public ResponseEntity<Resident> createResident(@PathVariable UUID buildingID, @PathVariable String tenantID, @RequestBody ResidentRegisterDTO residentRegister) throws Exception {
+    public ResponseEntity<Resident> createResident(
+            @PathVariable UUID buildingID,
+            @PathVariable String tenantID,
+            @RequestBody ResidentCreationRequest request
+    ) throws Exception {
         Building building = buildingService.findByBuildingID(buildingID);
         Member tenant = memberService.findByMemberID(tenantID);
 
-        if (building == null) {
-            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        if (building == null || tenant == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         Resident resident = new Resident(
                 tenant,
-                residentRegister.getApartmentNumber(),
-                residentRegister.getRentType(),
-                residentRegister.getMonthlyRentAmount(),
-                residentRegister.getMonthlyRentPaymentDate(),
-                residentRegister.getDeposit(),
-                residentRegister.getContractExpirationDate(),
+                request.apartmentNumber(), // <--- request.get...() 대신 record 접근 방식 사용
+                request.rentType(),
+                request.monthlyRentAmount(),
+                request.monthlyRentPaymentDate(),
+                request.deposit(),
+                request.contractExpirationDate(),
                 building,
-                residentRegister.getContractImageURL()
+                request.contractImageURL()
         );
 
-        residentService.saveResident(resident, residentRegister.getResidentName(), residentRegister.getPhoneNumber());
+        residentService.saveResident(resident, request.residentName(), request.phoneNumber());
 
         buildingService.incrementRentedHouseholds(buildingID);
 

@@ -35,8 +35,8 @@ public class BuildingService {
             landlord.setMemberRealName(realName);
             memberRepository.save(landlord);
         };
-        String encryptedAddress = EncryptionUtil.encrypt(building.getBuildingAddress());
-        building.setEncryptedBuildingAddress(encryptedAddress);
+//        String encryptedAddress = EncryptionUtil.encrypt(building.getBuildingAddress());
+//        building.setbuildingAddress(encryptedAddress);
         buildingRepository.save(building);
     }
 
@@ -44,14 +44,19 @@ public class BuildingService {
         return buildingRepository.findByBuildingID(buildingID);
     }
 
-    public List<Building> getAllBuildings() throws Exception {
-        List<Building> buildings = buildingRepository.findAll();
-        for (Building building : buildings) {
-            String decryptedAddress = EncryptionUtil.decrypt(building.getEncryptedBuildingAddress());
-            building.setBuildingAddress(decryptedAddress);
-        }
-        return buildings;
+//    public List<Building> getAllBuildings() throws Exception {
+//        List<Building> buildings = buildingRepository.findAll();
+//        for (Building building : buildings) {
+//            String decryptedAddress = EncryptionUtil.decrypt(building.getEncryptedBuildingAddress());
+//            building.setBuildingAddress(decryptedAddress);
+//        }
+//        return buildings;
+//    }
+
+    public List<Building> getAllBuildings() {
+        return buildingRepository.findAll();
     }
+
     public List<Building> findByLandlordID(String landlordID) {
         return buildingRepository.findByLandlordID(landlordID);
     }

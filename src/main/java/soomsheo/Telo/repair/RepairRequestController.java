@@ -10,7 +10,7 @@ import soomsheo.Telo.chat.domain.NoticeMessage;
 import soomsheo.Telo.chat.domain.RequestMessage;
 import soomsheo.Telo.repair.domain.RepairRequest;
 import soomsheo.Telo.chat.ChatService;
-import soomsheo.Telo.chat.FcmService;
+import soomsheo.Telo.notification.FcmService;
 
 import java.time.LocalDateTime;
 import java.util.List;

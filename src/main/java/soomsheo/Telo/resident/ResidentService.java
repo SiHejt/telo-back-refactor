@@ -1,6 +1,8 @@
 package soomsheo.Telo.resident;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import soomsheo.Telo.member.domain.Member;
 import soomsheo.Telo.building.domain.Building;
 import soomsheo.Telo.building.domain.Resident;
@@ -15,22 +17,17 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor // final 필드에 대한 생성자 자동 생성
+@Transactional(readOnly = true) // 기본적으로 모든 메소드는 읽기 전용 트랜잭션으로 설정
 public class ResidentService {
     private final ResidentRepository residentRepository;
     private final MemberRepository memberRepository;
-    private final BuildingRepository buildingRepository;
 
-    public ResidentService(ResidentRepository residentRepository, MemberRepository memberRepository, BuildingRepository buildingRepository) {
-        this.residentRepository = residentRepository;
-        this.memberRepository = memberRepository;
-        this.buildingRepository = buildingRepository;
-    }
-
+    @Transactional
     public void saveResident(Resident resident, String realName, String phoneNumber) throws Exception {
         Member tenant = resident.getTenant();
         if(tenant.getEncryptedPhoneNumber() == null || tenant.getEncryptedPhoneNumber().isEmpty()) {
-            String encryptedPhoneNumber = EncryptionUtil.encrypt(phoneNumber);
-            tenant.setEncryptedPhoneNumber(encryptedPhoneNumber);
+            tenant.setEncryptedPhoneNumber(EncryptionUtil.encrypt(phoneNumber));
             tenant.setMemberRealName(realName);
             memberRepository.save(tenant);
         };
@@ -41,64 +38,22 @@ public class ResidentService {
         return residentRepository.findByResidentID(residentID);
     }
 
-    public List<ResidentRegisterDTO> getAllResidents(UUID buildingID) throws Exception {
-        List<Resident> residents = residentRepository.findByBuilding_BuildingID(buildingID);
-        List<ResidentRegisterDTO> registerDTOS = new ArrayList<>();
-
-        for (Resident resident : residents) {
-            String decryptedPhoneNumber = EncryptionUtil.decrypt(resident.getTenant().getEncryptedPhoneNumber());
-
-            ResidentRegisterDTO registerDTO = new ResidentRegisterDTO(
-                    resident.getTenant().getMemberRealName(),
-                    decryptedPhoneNumber,
-                    resident.getApartmentNumber(),
-                    resident.getRentType(),
-                    resident.getMonthlyRentAmount(),
-                    resident.getMonthlyRentPaymentDate(),
-                    resident.getDeposit(),
-                    resident.getContractExpirationDate(),
-                    resident.getBuilding(),
-                    resident.getContractImageURL()
-            );
-
-            registerDTOS.add(registerDTO);
-
-            System.out.println("fuction running....... ");
-        }
-        return registerDTOS;
+    public List<ResidentRegisterDTO> getAllResidents(UUID buildingID) {
+        // N+1 문제를 해결한 새로운 메소드 사용
+        List<Resident> residents = residentRepository.findAllWithTenantByBuildingID(buildingID);
+        // Java Stream API를 사용하여 DTO로 변환
+        return residents.stream()
+                .map(ResidentRegisterDTO::fromEntity)
+                .toList();
     }
 
-    public List<ResidentDTO> getResidentsByMemberID(String memberID) throws Exception {
-        List<Resident> residents = residentRepository.findByTenantMemberID(memberID);
-
-        List<ResidentDTO> residentDTOs = new ArrayList<>();
-
-        for (Resident resident : residents) {
-            Building building = buildingRepository.findByBuildingID(resident.getBuilding().getBuildingID());
-
-
-            String buildingAddress = building.getBuildingAddress();
-
-            ResidentDTO dto = new ResidentDTO(
-                    resident.getApartmentNumber(),
-                    resident.getRentType(),
-                    resident.getMonthlyRentAmount(),
-                    resident.getMonthlyRentPaymentDate(),
-                    resident.getDeposit(),
-                    resident.getContractExpirationDate(),
-                    resident.getContractImageURL(),
-                    resident.getBuilding(),
-                    building.getBuildingID(),
-                    building.getBuildingName(),
-                    buildingAddress,
-                    building.getNotice(),
-                    building.getLandlordID(),
-                    building.getImageURL()
-            );
-            residentDTOs.add(dto);
-        }
-
-        return residentDTOs;
+    public List<ResidentDTO> getResidentsByMemberID(String memberID) {
+        // N+1 문제를 해결한 새로운 메소드 사용
+        List<Resident> residents = residentRepository.findAllWithBuildingByTenantMemberID(memberID);
+        // Java Stream API를 사용하여 DTO로 변환
+        return residents.stream()
+                .map(ResidentDTO::fromEntity)
+                .toList();
     }
 
     public List<Building> getBuildingsByTenantIDAndLandlordID (String tenantID, String landlordID) {

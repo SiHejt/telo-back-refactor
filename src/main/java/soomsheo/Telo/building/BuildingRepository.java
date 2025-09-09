@@ -9,8 +9,11 @@ import java.util.UUID;
 
 public interface BuildingRepository extends JpaRepository<Building, UUID> {
     Building findByBuildingID(UUID buildingID);
+
     List<Building> findByLandlordID(String landlordID);
 
-    @Query("SELECT b.encryptedBuildingAddress FROM Building b")
-    List<String> findAllEncryptedAddresses();
+//    @Query("SELECT b.encryptedBuildingAddress FROM Building b")
+//    List<String> findAllEncryptedAddresses();
+    @Query("SELECT b.buildingAddress FROM Building b")
+    List<String> findAllBuildingAddresses();
 }

@@ -8,7 +8,7 @@ import soomsheo.Telo.building.domain.Building;
 import soomsheo.Telo.building.dto.BuildingRegisterDTO;
 import soomsheo.Telo.building.dto.NoticeUpdateDTO;
 import soomsheo.Telo.member.MemberService;
-import soomsheo.Telo.util.EncryptionUtil;
+//import soomsheo.Telo.util.EncryptionUtil;
 
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -67,10 +67,15 @@ public class BuildingController {
         try {
             List<Building> buildings = buildingService.getAllBuildings();
             for (Building building : buildings) {
-                String decryptedAddress = EncryptionUtil.decrypt(building.getEncryptedBuildingAddress());
-                System.out.println("주소 비교: " + decryptedAddress + " with " + buildingAddress);
 
-                if (decryptedAddress.trim().equals(buildingAddress.trim())) {
+//                String decryptedAddress = EncryptionUtil.decrypt(building.getEncryptedBuildingAddress());
+//                System.out.println("주소 비교: " + decryptedAddress + " with " + buildingAddress);
+//
+//                if (decryptedAddress.trim().equals(buildingAddress.trim())) {
+//                    Member member = memberService.findByMemberID(building.getLandlordID());
+
+                String plainAddressFromDB = building.getBuildingAddress();
+                if (plainAddressFromDB.trim().equals(buildingAddress.trim())) {
                     Member member = memberService.findByMemberID(building.getLandlordID());
 
                     if (member != null) {
@@ -79,13 +84,8 @@ public class BuildingController {
                         response.put("buildingID", building.getBuildingID());
                         response.put("memberRealName", member.getMemberRealName());
 
-                        System.out.println("buildingID: " + building.getBuildingID());
-                        System.out.println("Landlord name to match: " + member.getMemberRealName());
-
                         return new ResponseEntity<>(response, HttpStatus.OK);
                     }
-                } else {
-                    System.out.println("Address did not match: " + decryptedAddress + " vs " + buildingAddress);
                 }
             }
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

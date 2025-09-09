@@ -1,4 +1,4 @@
-package soomsheo.Telo.dto;
+package soomsheo.Telo.member.dto;
 
 import lombok.Getter;
 import lombok.Setter;

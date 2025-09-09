@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import soomsheo.Telo.member.domain.Member;
 import soomsheo.Telo.member.dto.MemberDTO;
-import soomsheo.Telo.dto.MemberTypeUpdateRequestDTO;
+import soomsheo.Telo.member.dto.MemberTypeUpdateRequestDTO;
 
 @RestController
 @RequestMapping("/api/members")

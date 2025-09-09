@@ -1,4 +1,4 @@
-package soomsheo.Telo.dto;
+package soomsheo.Telo.notification.dto;
 
 import lombok.*;
 

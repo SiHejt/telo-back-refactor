@@ -1,4 +1,4 @@
-package soomsheo.Telo.chat;
+package soomsheo.Telo.notification;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -9,12 +9,13 @@ import org.springframework.http.*;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import soomsheo.Telo.chat.ChatService;
 import soomsheo.Telo.chat.domain.ChatMessage;
 import soomsheo.Telo.chat.domain.ChatRoom;
 import soomsheo.Telo.member.MemberService;
 import soomsheo.Telo.member.domain.Member;
-import soomsheo.Telo.dto.FcmMessageDTO;
-import soomsheo.Telo.dto.FcmSendDTO;
+import soomsheo.Telo.notification.dto.FcmMessageDTO;
+import soomsheo.Telo.notification.dto.FcmSendDTO;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
