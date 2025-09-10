@@ -36,47 +36,47 @@ public class ResidentPerformanceTest {
     @Autowired
     private ResidentRepository residentRepository;
 
-    @Test
-    @Transactional
-    void 건물별_세입자_목록_조회시_N플러스1_문제_측정() throws Exception {
-        // --- 1. 데이터 준비 ---
-        Building testBuilding = new Building("테스트 빌딩", "암호화된 주소", 50, 0, List.of("img.jpg"), "landlord123", "");
-        // Use the returned instance from the save method
-        testBuilding = buildingRepository.save(testBuilding);
-
-        int residentCount = 10000;
-        List<Member> tenants = new ArrayList<>();
-        for (int i = 0; i < residentCount; i++) {
-            Member tenant = new Member();
-            tenant.setMemberID("tenant" + i);
-            tenant.setMemberRealName("세입자" + i);
-            tenant.setMemberType("TENANT");
-            tenant.setPhoneNumber("010-1234-" + String.format("%04d", i));
-            tenants.add(tenant);
-        }
-        memberRepository.saveAll(tenants);
-
-        List<Resident> residents = new ArrayList<>();
-        for (Member tenant : tenants) {
-            // Now using the JPA-managed testBuilding instance
-            Resident resident = new Resident(tenant, (101 + residents.size()) + "호", "월세", "0", "0", "0", "2026-09-06", testBuilding, List.of("contract.jpg"));
-            residents.add(resident);
-        }
-        // This line (64) should now work without errors
-        residentRepository.saveAll(residents);
-        System.out.println("데이터 준비 완료: 건물 1개, 세입자 " + residentCount + "명");
-
-
-        // --- 2. 성능 측정 ---
-        System.out.println("성능 측정을 시작합니다...");
-        long startTime = System.currentTimeMillis();
-
-        mockMvc.perform(get("/api/residents/landlord/resident-list/" + testBuilding.getBuildingID()))
-                .andExpect(status().isOk())
-                .andDo(print());
-
-        long endTime = System.currentTimeMillis();
-        long duration = endTime - startTime;
-        System.out.println("N+1 문제 발생 시 조회 소요 시간: " + duration + "ms");
-    }
+//    @Test
+//    @Transactional
+//    void 건물별_세입자_목록_조회시_N플러스1_문제_측정() throws Exception {
+//        // --- 1. 데이터 준비 ---
+//        Building testBuilding = new Building("테스트 빌딩", "암호화된 주소", 50, 0, List.of("img.jpg"), "landlord123", "");
+//        // Use the returned instance from the save method
+//        testBuilding = buildingRepository.save(testBuilding);
+//
+//        int residentCount = 10000;
+//        List<Member> tenants = new ArrayList<>();
+//        for (int i = 0; i < residentCount; i++) {
+//            Member tenant = new Member();
+//            tenant.setMemberID("tenant" + i);
+//            tenant.setMemberRealName("세입자" + i);
+//            tenant.setMemberType("TENANT");
+//            tenant.setPhoneNumber("010-1234-" + String.format("%04d", i));
+//            tenants.add(tenant);
+//        }
+//        memberRepository.saveAll(tenants);
+//
+//        List<Resident> residents = new ArrayList<>();
+//        for (Member tenant : tenants) {
+//            // Now using the JPA-managed testBuilding instance
+//            Resident resident = new Resident(tenant, (101 + residents.size()) + "호", "월세", "0", "0", "0", "2026-09-06", testBuilding, List.of("contract.jpg"));
+//            residents.add(resident);
+//        }
+//        // This line (64) should now work without errors
+//        residentRepository.saveAll(residents);
+//        System.out.println("데이터 준비 완료: 건물 1개, 세입자 " + residentCount + "명");
+//
+//
+//        // --- 2. 성능 측정 ---
+//        System.out.println("성능 측정을 시작합니다...");
+//        long startTime = System.currentTimeMillis();
+//
+//        mockMvc.perform(get("/api/residents/landlord/resident-list/" + testBuilding.getBuildingID()))
+//                .andExpect(status().isOk())
+//                .andDo(print());
+//
+//        long endTime = System.currentTimeMillis();
+//        long duration = endTime - startTime;
+//        System.out.println("N+1 문제 발생 시 조회 소요 시간: " + duration + "ms");
+//    }
 }

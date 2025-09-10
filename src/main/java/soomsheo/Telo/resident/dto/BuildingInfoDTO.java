@@ -1,6 +1,7 @@
 package soomsheo.Telo.resident.dto;
 
 import soomsheo.Telo.building.domain.Building;
+import soomsheo.Telo.member.domain.Member;
 import soomsheo.Telo.util.EncryptionUtil;
 
 import java.util.List;
@@ -11,22 +12,23 @@ public record BuildingInfoDTO(
         String buildingName,
         String buildingAddress,
         String notice,
-        String landlordID,
+        String landlordMemberID,
+        String landlordRealName,
         List<String> buildingImageURL
 ) {
     public static BuildingInfoDTO fromEntity(Building building) {
-        try {
-            return new BuildingInfoDTO(
-                    building.getBuildingID(),
-                    building.getBuildingName(),
-                    //EncryptionUtil.decrypt(building.getEncryptedBuildingAddress()),
-                    building.getBuildingAddress(),
-                    building.getNotice(),
-                    building.getLandlordID(),
-                    building.getImageURL()
-            );
-        } catch (Exception e) {
-            throw new RuntimeException("Failed to decrypt building address", e);
-        }
+        Member landlord = building.getLandlord();
+        String landlordMemberId = (landlord != null) ? landlord.getMemberID() : null;
+        String landlordRealName = (landlord != null) ? landlord.getMemberRealName() : null;
+
+        return new BuildingInfoDTO(
+                building.getBuildingID(),
+                building.getBuildingName(),
+                building.getBuildingAddress(),
+                building.getNotice(),
+                landlordMemberId,
+                landlordRealName,
+                building.getImageURL()
+        );
     }
 }

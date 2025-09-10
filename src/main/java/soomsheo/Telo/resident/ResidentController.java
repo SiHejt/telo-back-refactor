@@ -54,8 +54,8 @@ public class ResidentController {
             @PathVariable String tenantID,
             @RequestBody ResidentCreationRequest request
     ) throws Exception {
-        Building building = buildingService.findByBuildingID(buildingID);
-        Member tenant = memberService.findByMemberID(tenantID);
+        Building building = buildingService.findByBuildingID(buildingID).orElse(null);
+        Member tenant = memberService.findByMemberID(tenantID); // MemberService의 findByMemberID가 Optional을 반환한다면 .orElse(null) 처리 필요
 
         if (building == null || tenant == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

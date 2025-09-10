@@ -14,11 +14,12 @@ import soomsheo.Telo.util.EncryptionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor // final 필드에 대한 생성자 자동 생성
-@Transactional(readOnly = true) // 기본적으로 모든 메소드는 읽기 전용 트랜잭션으로 설정
+@RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ResidentService {
     private final ResidentRepository residentRepository;
     private final MemberRepository memberRepository;
@@ -34,33 +35,30 @@ public class ResidentService {
         residentRepository.save(resident);
     }
 
-    public Resident findByResidentID(UUID residentID) {
+    public Optional<Resident> findByResidentID(UUID residentID) {
         return residentRepository.findByResidentID(residentID);
     }
 
     public List<ResidentRegisterDTO> getAllResidents(UUID buildingID) {
-        // N+1 문제를 해결한 새로운 메소드 사용
-        List<Resident> residents = residentRepository.findAllWithTenantByBuildingID(buildingID);
-        // Java Stream API를 사용하여 DTO로 변환
+        List<Resident> residents = residentRepository.findByBuilding_BuildingID(buildingID);
         return residents.stream()
                 .map(ResidentRegisterDTO::fromEntity)
                 .toList();
     }
 
     public List<ResidentDTO> getResidentsByMemberID(String memberID) {
-        // N+1 문제를 해결한 새로운 메소드 사용
         List<Resident> residents = residentRepository.findAllWithBuildingByTenantMemberID(memberID);
-        // Java Stream API를 사용하여 DTO로 변환
         return residents.stream()
                 .map(ResidentDTO::fromEntity)
                 .toList();
     }
 
-    public List<Building> getBuildingsByTenantIDAndLandlordID (String tenantID, String landlordID) {
-        return residentRepository.findBuildingsByTenantIdAndLandlordId(tenantID, landlordID);
+    public List<Building> getBuildingsByTenantIDAndLandlordID(String tenantID, String landlordID) {
+        return residentRepository.findBuildingsByTenantMemberIDAndLandlordMemberID(tenantID, landlordID);
     }
 
-    public List<Resident> getResidentsByTenantIdAndLandlordId (String tenantID, String landlordID) {
-        return residentRepository.findResidentsByTenantIdAndLandlordId(tenantID, landlordID);
+
+    public List<Resident> getResidentsByTenantIdAndLandlordId(String tenantID, String landlordID) {
+        return residentRepository.findResidentsByTenantMemberIDAndLandlordMemberID(tenantID, landlordID);
     }
 }
