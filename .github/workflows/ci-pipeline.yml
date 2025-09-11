@@ -1,0 +1,46 @@
+# .github/workflows/ci-pipeline.yml
+name: CI/CD Pipeline
+
+# 워크플로우를 트리거할 이벤트 정의
+on:
+  push:
+    branches: [ "main" ] # main 브랜치에 푸시될 때 실행
+  pull_request:
+    branches: [ "main" ] # main 브랜치로 PR이 생성되거나 업데이트될 때 실행
+
+# 워크플로우에 포함될 작업(jobs) 정의
+jobs:
+  build-and-test: # 작업 이름 (자유롭게 지정)
+    runs-on: ubuntu-latest # 이 작업이 실행될 가상 환경 (최신 Ubuntu 환경)
+
+    steps:
+      - name: Checkout Code # 1. 코드 체크아웃 (GitHub 저장소의 코드를 러너로 가져옴)
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17 # 2. Java Development Kit (JDK) 설정 (Spring Boot 버전과 일치하는 JDK 사용)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17' # 사용 중인 Java 버전에 맞게 변경 (e.g., '11', '21')
+          distribution: 'temurin' # Adoptium Temurin 배포판 사용 (널리 사용됨)
+          cache: 'gradle' # Gradle 의존성 캐싱 (빌드 속도 향상)
+
+      - name: Grant execute permission for gradlew # 3. Gradle Wrapper 실행 권한 부여 (리눅스/맥 환경에서 필요)
+        run: chmod +x gradlew
+
+      - name: Build with Gradle # 4. Gradle로 프로젝트 빌드 (의존성 다운로드, 컴파일 등)
+        run: ./gradlew build -x test # '-x test'는 빌드 시 테스트 실행을 제외 (아래에서 따로 실행할 것이므로)
+
+      - name: Run Unit and Integration Tests # 5. 테스트 실행 (중요! 모든 유닛/통합 테스트를 실행)
+        run: ./gradlew test
+
+      - name: Upload JaCoCo Coverage Report # (선택 사항) JaCoCo 코드 커버리지 리포트 업로드 (coverage 플러그인 설정 시)
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: build/reports/jacoco/test/html # JaCoCo 리포트 경로 (프로젝트 설정에 따라 다를 수 있음)
+
+    # - name: Publish Test Report # (선택 사항) 테스트 결과 보고서를 GitHub Actions UI에 표시
+    #   uses: mikepenz/action-junit-report@v3
+    #   if: always() # 테스트 실패해도 항상 보고서 업로드
+    #   with:
+    #     report_paths: '**/build/test-results/test/*.xml' # JUnit XML 보고서 경로
