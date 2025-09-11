@@ -31,7 +31,7 @@ jobs:
         run: ./gradlew build -x test # '-x test'는 빌드 시 테스트 실행을 제외 (아래에서 따로 실행할 것이므로)
 
       - name: Run Unit and Integration Tests # 5. 테스트 실행 (중요! 모든 유닛/통합 테스트를 실행)
-        run: ./gradlew test --tests "*" --tests "!soomsheo.Telo.test.BuildingControllerPerformanceTest" --tests "!soomsheo.Telo.test.ResidentPerformanceTest"
+        run: ./gradlew test --tests "*" --tests "!soomsheo.Telo.controller.BuildingControllerPerformanceTest" --tests "!soomsheo.Telo.controller.ResidentPerformanceTest"
 
       - name: Upload JaCoCo Coverage Report # (선택 사항) JaCoCo 코드 커버리지 리포트 업로드 (coverage 플러그인 설정 시)
         uses: actions/upload-artifact@v4
