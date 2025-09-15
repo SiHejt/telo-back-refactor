@@ -1,5 +1,10 @@
 package soomsheo.Telo.building;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,6 +18,7 @@ import soomsheo.Telo.member.MemberService;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
+@Tag(name = "건물 관리", description = "건물 등록, 조회, 수정 등 관련 API")
 @RestController
 @RequestMapping("/api/buildings")
 public class BuildingController {
@@ -71,6 +77,8 @@ public class BuildingController {
     }
 
     @GetMapping("/autocomplete")
+    @Operation(summary = "건물 이름 자동완성", description = "검색어를 포함하는 건물 목록을 조회하여 자동완성을 지원합니다.")
+    @ApiResponse(responseCode = "200", description = "조회 성공")
     public List<String> autocompleteAddress(@RequestParam String address) {
         return buildingService.findMatchingBuildingAddresses(address);
     }
@@ -113,6 +121,16 @@ public class BuildingController {
     }
 
     @PatchMapping("/{buildingID}/notice")
+    @Operation(summary = "건물 공지사항 수정", description = "특정 건물의 공지사항을 수정합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "수정 성공"),
+            @ApiResponse(responseCode = "404", description = "해당 건물을 찾을 수 없음")
+    })
+    public void updateNotice(
+            @Parameter(name = "buildingID", description = "공지를 수정할 건물의 ID", required = true) @PathVariable Long buildingID,
+            @RequestBody NoticeUpdateRequest noticeUpdateRequest) {
+        // 공지 수정 로직
+    }
     public ResponseEntity<BuildingResponse> updateNotice(@PathVariable UUID buildingID, @RequestBody NoticeUpdateRequest dto) {
         try {
             Building updatedBuilding = buildingService.updateNotice(buildingID, dto.notice());

@@ -1,5 +1,9 @@
 package soomsheo.Telo.repair;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+@Tag(name = "수리 요청", description = "방 수리 요청 관련 API")
 @RestController
 @RequestMapping("/api/repair-request")
 public class RepairRequestController {
@@ -36,7 +41,14 @@ public class RepairRequestController {
         this.fcmService = fcmService;
     }
 
+
     @PostMapping
+    @Operation(summary = "수리 요청 등록", description = "입주자가 시설 수리를 요청합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "요청 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청 형식"),
+            @ApiResponse(responseCode = "404", description = "사용자 정보를 찾을 수 없음")
+    })
     public ResponseEntity<String> createRepairRequest(@RequestBody RepairRequest request) {
         try {
             RepairRequest repairRequest = new RepairRequest(
